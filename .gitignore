@@ -219,3 +219,4 @@ __marimo__/
 
 # Review Mode MCP — runtime directories
 .revisions/
+uv.lock
