@@ -1,4 +1,6 @@
 # Review Mode MCP Server
+[![Version](https://img.shields.io/pypi/v/review-mode-mcp.svg?maxAge=3600)](https://pypi.org/project/review-mode-mcp/)
+[![Downloads](https://pepy.tech/badge/review-mode-mcp)](https://pepy.tech/project/review-mode-mcp)
 
 MCP server for **[Review Mode](https://marketplace.visualstudio.com/items?itemName=aurelio-amerio.review-mode)** — manage review annotations from any AI agent.
 
