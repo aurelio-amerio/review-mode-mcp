@@ -8,7 +8,7 @@ Instead of loading skill files, running CLI scripts, or understanding JSON forma
 
 ```bash
 # Run directly (no install needed)
-uvx review-mode-mcp --workspace /path/to/project
+uvx review-mode-mcp
 
 # Or install globally
 uv tool install review-mode-mcp
@@ -23,7 +23,7 @@ Add to your MCP client config (Claude Code, Cline, Cursor, Windsurf, Antigravity
   "mcpServers": {
     "review-mode": {
       "command": "uvx",
-      "args": ["review-mode-mcp", "--workspace", "/path/to/project"]
+      "args": ["review-mode-mcp"]
     }
   }
 }
