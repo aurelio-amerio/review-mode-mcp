@@ -7,11 +7,12 @@ Instead of loading skill files, running CLI scripts, or understanding JSON forma
 ## Installation
 
 ```bash
-# Run directly (no install needed)
-uvx review-mode-mcp
 
-# Or install globally
+# Install globally
 uv tool install review-mode-mcp
+
+# Or run directly (no install needed)
+uvx review-mode-mcp
 ```
 
 ## MCP Configuration
@@ -21,9 +22,8 @@ Add to your MCP client config (Claude Code, Cline, Cursor, Windsurf, Antigravity
 ```json
 {
   "mcpServers": {
-    "review-mode": {
-      "command": "uvx",
-      "args": ["review-mode-mcp"]
+    "review-mode-mcp": {
+      "command": "review-mode-mcp"
     }
   }
 }
@@ -33,9 +33,7 @@ Add to your MCP client config (Claude Code, Cline, Cursor, Windsurf, Antigravity
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--workspace` | `.` (cwd) | Project workspace root |
 | `--revisions-dir` | `.revisions` | Name of the revisions directory |
-| `--code-command` | `code` | Editor CLI command (`cursor`, `windsurf`, etc.) |
 
 ## Tools
 
