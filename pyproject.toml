@@ -1,0 +1,19 @@
+[project]
+name = "review-mode-mcp"
+version = "0.1.0"
+description = "MCP server for Review Mode — manage review annotations from any AI agent"
+readme = "README.md"
+authors = [
+    { name = "Aurelio Amerio", email = "aure.amerio@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "mcp[cli]",
+]
+
+[project.scripts]
+review-mode-mcp = "review_mode_mcp.server:main"
+
+[build-system]
+requires = ["uv_build>=0.10.8,<0.11.0"]
+build-backend = "uv_build"
