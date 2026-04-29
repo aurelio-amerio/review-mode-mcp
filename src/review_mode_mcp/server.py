@@ -37,12 +37,12 @@ mcp = FastMCP("review-mode")
 # ---------------------------------------------------------------------------
 
 
-def _get_workspace(workspace_override: Optional[str]) -> Path:
-    return Path(workspace_override).resolve() if workspace_override else _workspace
+def _get_workspace(workspace: str) -> Path:
+    return Path(workspace).resolve()
 
 
 @mcp.tool()
-def open_review(file_path: str, workspace: Optional[str] = None) -> str:
+def open_review(file_path: str, workspace: str) -> str:
     """Open a file in Review Mode inside VS Code.
 
     Writes a UI directive file that the VS Code extension picks up
@@ -51,7 +51,7 @@ def open_review(file_path: str, workspace: Optional[str] = None) -> str:
 
     Args:
         file_path: Relative path to the file (e.g. "docs/plan.md").
-        workspace: Optional explicit workspace path to override the server default.
+        workspace: Explicit workspace path.
     """
     effective_workspace = _get_workspace(workspace)
     abs_path = str((effective_workspace / file_path).resolve())
@@ -74,21 +74,21 @@ def open_review(file_path: str, workspace: Optional[str] = None) -> str:
 
 
 @mcp.tool()
-def list_reviewed_files(workspace: Optional[str] = None) -> list[dict]:
+def list_reviewed_files(workspace: str) -> list[dict]:
     """List all files in the workspace that have reviews.
 
     Returns an array of objects with file_path, revision_count,
     total_annotations, open_count, and last_review_date.
 
     Args:
-        workspace: Optional explicit workspace path to override the server default.
+        workspace: Explicit workspace path.
     """
     effective_workspace = _get_workspace(workspace)
     return revisions.list_reviewed_files(effective_workspace, _revisions_dir)
 
 
 @mcp.tool()
-def get_review_summary(file_path: str, workspace: Optional[str] = None) -> dict:
+def get_review_summary(file_path: str, workspace: str) -> dict:
     """Return summary metadata for a file's review.
 
     Includes revision_count, latest_revision, comment counts by status
@@ -96,14 +96,14 @@ def get_review_summary(file_path: str, workspace: Optional[str] = None) -> dict:
 
     Args:
         file_path: Relative path to the reviewed file.
-        workspace: Optional explicit workspace path to override the server default.
+        workspace: Explicit workspace path.
     """
     effective_workspace = _get_workspace(workspace)
     return revisions.get_review_summary(effective_workspace, _revisions_dir, file_path)
 
 
 @mcp.tool()
-def get_annotations(file_path: str, workspace: Optional[str] = None) -> list[dict]:
+def get_annotations(file_path: str, workspace: str) -> list[dict]:
     """Return the full annotation array from the latest revision of a file.
 
     Each annotation contains id, startLine, endLine, textPreview,
@@ -111,7 +111,7 @@ def get_annotations(file_path: str, workspace: Optional[str] = None) -> list[dic
 
     Args:
         file_path: Relative path to the reviewed file.
-        workspace: Optional explicit workspace path to override the server default.
+        workspace: Explicit workspace path.
     """
     effective_workspace = _get_workspace(workspace)
     return revisions.get_annotations(effective_workspace, _revisions_dir, file_path)
@@ -121,9 +121,9 @@ def get_annotations(file_path: str, workspace: Optional[str] = None) -> list[dic
 def update_annotation(
     file_path: str,
     annotation_ids: list[str],
+    workspace: str,
     status: Optional[str] = None,
     message: Optional[str] = None,
-    workspace: Optional[str] = None,
 ) -> str:
     """Update the status and/or add an agent reply to one or more annotations.
 
@@ -132,9 +132,9 @@ def update_annotation(
     Args:
         file_path: Relative path to the reviewed file.
         annotation_ids: List of annotation IDs to update.
+        workspace: Explicit workspace path.
         status: New status (open, in-progress, resolved, wont-fix).
         message: Reply text (auto-prefixed with [AGENT]).
-        workspace: Optional explicit workspace path to override the server default.
     """
     effective_workspace = _get_workspace(workspace)
     count = revisions.update_annotations(
@@ -148,9 +148,9 @@ def create_annotation(
     file_path: str,
     line: int,
     message: str,
+    workspace: str,
     priority: str = "none",
     status: str = "open",
-    workspace: Optional[str] = None,
 ) -> dict:
     """Create a new annotation on a specific line of the reviewed file.
 
@@ -158,9 +158,9 @@ def create_annotation(
         file_path: Relative path to the reviewed file.
         line: Line number to annotate (1-indexed).
         message: Comment text (auto-prefixed with [AGENT]).
+        workspace: Explicit workspace path.
         priority: Priority level (none, low, medium, high, urgent).
         status: Initial status (open, in-progress, resolved, wont-fix).
-        workspace: Optional explicit workspace path to override the server default.
     """
     effective_workspace = _get_workspace(workspace)
     return revisions.create_annotation(
