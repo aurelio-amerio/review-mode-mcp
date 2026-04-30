@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
-from review_mode_mcp.utils import generate_id, normalize_path
+from review_mode_mcp.utils import external_folder_name, generate_id, normalize_path
 
 # ---------------------------------------------------------------------------
 # Types (mirroring annotationStore.ts)
@@ -34,10 +34,27 @@ def _get_file_revisions_dir(
 ) -> Path:
     """Return the directory inside ``.revisions/`` for *file_path*.
 
-    Example:
+    For files inside the workspace the folder name is derived from the
+    workspace-relative path (current behaviour).  For files **outside** the
+    workspace a deterministic hash-based name is used so that reopening the
+    same external file always resolves to the same directory.
+
+    Example (internal)::
+
         workspace / .revisions / docs_plans_my-plan_md /
+
+    Example (external)::
+
+        workspace / .revisions / _ext_my-plan_a3f1c9b2 /
     """
-    folder_name = normalize_path(file_path)
+    resolved = (workspace / file_path).resolve()
+    try:
+        rel = str(resolved.relative_to(workspace))
+        # File is inside the workspace — use normalised relative path
+        folder_name = normalize_path(rel)
+    except ValueError:
+        # File is outside the workspace — use deterministic hash
+        folder_name = external_folder_name(str(resolved))
     return workspace / revisions_dir / folder_name
 
 

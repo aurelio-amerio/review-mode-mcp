@@ -59,7 +59,7 @@ def open_review(file_path: str, workspace: str) -> str:
     directive = {
         "_ui_directive": True,
         "command_id": "reviewMode.open",
-        "args": [abs_path],
+        "args": [abs_path, str(effective_workspace)],
     }
 
     directives_dir = effective_workspace / _revisions_dir / ".directives"
