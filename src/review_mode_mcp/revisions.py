@@ -45,7 +45,7 @@ def _get_file_revisions_dir(
 
     Example (external)::
 
-        workspace / .revisions / _ext_my-plan_a3f1c9b2 /
+        workspace / .revisions / my-plan_a3f1c9b2 /
     """
     resolved = (workspace / file_path).resolve()
     try:

@@ -34,8 +34,7 @@ def external_folder_name(abs_path: str) -> str:
     """Deterministic folder name for files outside the workspace.
 
     Uses the file's basename (without extension) plus the first 8 characters
-    of the SHA-256 hex digest of the normalised absolute path.  The ``_ext_``
-    prefix distinguishes these from normal workspace-relative entries.
+    of the SHA-256 hex digest of the normalised absolute path.
 
     The normalisation step (lowercase, forward slashes) ensures that the
     same file always produces the same hash on Windows regardless of how
@@ -43,9 +42,9 @@ def external_folder_name(abs_path: str) -> str:
 
     Example::
 
-        _ext_basic-python-ledger_9d4da9ce_a3f1c9b2
+        basic-python-ledger_9d4da9ce_a3f1c9b2
     """
     normalized = abs_path.replace("\\", "/").lower()
     short_hash = hashlib.sha256(normalized.encode()).hexdigest()[:8]
     basename = Path(abs_path).stem
-    return f"_ext_{basename}_{short_hash}"
+    return f"{basename}_{short_hash}"
