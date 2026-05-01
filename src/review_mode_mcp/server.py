@@ -169,34 +169,99 @@ def create_annotation(
 
 
 # ---------------------------------------------------------------------------
+# Install command
+# ---------------------------------------------------------------------------
+
+SUPPORTED_AGENTS = ("cursor", "cline")
+
+
+def _install_agent(agent: str) -> None:
+    """Copy bundled agent rule files into the current working directory."""
+    import importlib.resources
+    import shutil
+
+    if agent not in SUPPORTED_AGENTS:
+        print(f"Error: unknown agent '{agent}'. Supported: {', '.join(SUPPORTED_AGENTS)}")
+        sys.exit(1)
+
+    # Locate the bundled data directory for the requested agent
+    data_ref = importlib.resources.files("review_mode_mcp") / "data" / "agents" / agent
+    source = Path(str(data_ref))
+
+    if not source.is_dir():
+        print(f"Error: agent data not found at {source}")
+        sys.exit(1)
+
+    dest = Path.cwd()
+
+    # Copy each top-level item from the agent directory into cwd
+    for child in source.iterdir():
+        child_dest = dest / child.name
+        if child.is_dir():
+            shutil.copytree(child, child_dest, dirs_exist_ok=True)
+        else:
+            shutil.copy2(child, child_dest)
+
+    print(f"Installed '{agent}' rules into {dest}")
+
+
+# ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
 
 
 def main() -> None:
-    """Parse CLI arguments and start the MCP server."""
+    """Parse CLI arguments and run the requested command."""
     parser = argparse.ArgumentParser(
         prog="review-mode-mcp",
         description="MCP server for Review Mode — manage review annotations from any AI agent.",
     )
-    parser.add_argument(
+    subparsers = parser.add_subparsers(dest="command")
+
+    # -- serve (default) ---------------------------------------------------
+    serve_parser = subparsers.add_parser(
+        "serve",
+        help="Start the MCP server (default when no command is given).",
+    )
+    serve_parser.add_argument(
         "--workspace",
         default=".",
         help="Path to the project workspace root (default: current directory).",
     )
-    parser.add_argument(
+    serve_parser.add_argument(
         "--revisions-dir",
         default=".revisions",
         help="Name of the revisions directory (default: .revisions).",
     )
 
+    # -- install -----------------------------------------------------------
+    install_parser = subparsers.add_parser(
+        "install",
+        help="Install agent rules into the current directory.",
+    )
+    install_parser.add_argument(
+        "agent",
+        choices=SUPPORTED_AGENTS,
+        help="Agent to install rules for (cursor or cline).",
+    )
+
     args = parser.parse_args()
 
-    global _workspace, _revisions_dir
-    _workspace = Path(args.workspace).resolve()
-    _revisions_dir = args.revisions_dir
+    # Default to "serve" when no subcommand is given (backward compat)
+    if args.command is None or args.command == "serve":
+        # Re-parse with serve defaults when no subcommand was given
+        if args.command is None:
+            # Allow bare flags like --workspace to still work
+            serve_parser.parse_args(sys.argv[1:], namespace=args)
 
-    mcp.run()
+        global _workspace, _revisions_dir
+        _workspace = Path(args.workspace).resolve()
+        _revisions_dir = args.revisions_dir
+
+        mcp.run()
+
+    elif args.command == "install":
+        _install_agent(args.agent)
 
 
 if __name__ == "__main__":
