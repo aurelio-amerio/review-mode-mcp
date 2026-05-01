@@ -37,6 +37,20 @@ Add to your MCP client config (Claude Code, Cline, Cursor, Windsurf, Antigravity
 |------|---------|-------------|
 | `--revisions-dir` | `.revisions` | Name of the revisions directory |
 
+## Agent Rules & Skills
+
+The MCP server bundles ready-made rules and skills for supported AI agents. Run the `install` command from your project root to copy them into your working directory:
+
+```bash
+# Install Cursor rules and skills
+review-mode-mcp install cursor
+
+# Install Cline rules and skills
+review-mode-mcp install cline
+```
+
+This copies the appropriate configuration files (`.cursor/rules/`, `.cursor/skills/` or `.clinerules/`, `.cline/skills/`) into your current directory, giving your AI agent the instructions it needs to use the Review Mode workflow.
+
 ## Tools
 
 | Tool | Description |
