@@ -1,6 +1,6 @@
 [project]
 name = "review-mode-mcp"
-version = "0.2.1"
+version = "0.2.2"
 description = "MCP server for Review Mode — manage review annotations from any AI agent"
 readme = "README.md"
 authors = [
