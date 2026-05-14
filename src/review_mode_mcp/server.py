@@ -107,7 +107,9 @@ def get_annotations(file_path: str, workspace: str) -> list[dict]:
     """Return the full annotation array from the latest revision of a file.
 
     Each annotation contains id, startLine, endLine, textPreview,
-    priority, status, and thread[].
+    priority, status, and thread[]. Annotations on deleted diff lines also
+    include deletedLine (bool), oldStartLine, and oldEndLine. Annotations
+    with diff context include previousVersionContext and currentVersionContext.
 
     Args:
         file_path: Relative path to the reviewed file.
