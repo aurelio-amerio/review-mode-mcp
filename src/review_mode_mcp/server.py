@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from importlib.metadata import version as _pkg_version
 from pathlib import Path
 from typing import Optional
 
@@ -180,6 +181,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         prog="review-mode-mcp",
         description="MCP server for Review Mode — manage review annotations from any AI agent.",
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"%(prog)s {_pkg_version('review-mode-mcp')}",
     )
     subparsers = parser.add_subparsers(dest="command")
 
