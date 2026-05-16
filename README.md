@@ -4,12 +4,11 @@
 
 MCP server for **[Review Mode](https://marketplace.visualstudio.com/items?itemName=aurelio-amerio.review-mode)** — manage review annotations from any AI agent.
 
-Instead of loading skill files, running CLI scripts, or understanding JSON formats, any MCP-capable agent gets 6 structured tools to work with review annotations.
+For full documentation, see the [Review Mode GitHub page](https://github.com/aurelio-amerio/review-mode).
 
 ## Installation
 
 ```bash
-
 # Install globally
 uv tool install review-mode-mcp
 
@@ -19,7 +18,7 @@ uvx review-mode-mcp
 
 ## MCP Configuration
 
-Add to your MCP client config (Claude Code, Cline, Cursor, Windsurf, Antigravity, etc.):
+Add to your MCP client config:
 
 ```json
 {
@@ -31,13 +30,6 @@ Add to your MCP client config (Claude Code, Cline, Cursor, Windsurf, Antigravity
 }
 ```
 
-### CLI Options
-
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--revisions-dir` | `.revisions` | Name of the revisions directory |
-
-
 ## Tools
 
 | Tool | Description |
@@ -48,20 +40,6 @@ Add to your MCP client config (Claude Code, Cline, Cursor, Windsurf, Antigravity
 | `get_annotations` | Get the full annotation array from a file's latest revision |
 | `update_annotation` | Update status and/or add a reply to annotations |
 | `create_annotation` | Create a new annotation on a specific line |
-
-## How It Works
-
-The server reads and writes the `.revisions/` directory — the same files the VS Code extension watches. When the server modifies annotations, the extension detects the filesystem changes and updates its UI automatically.
-
-```
-.revisions/
-└── docs_plans_my-plan_md/    # normalized path
-    ├── revisions.json         # revision index
-    ├── my-plan.rev0.md        # snapshot
-    ├── rev0.json              # annotations for rev0
-    ├── my-plan.rev1.md
-    └── rev1.json
-```
 
 ## Requirements
 
