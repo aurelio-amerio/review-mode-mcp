@@ -39,6 +39,11 @@ def _get_file_revisions_dir(
     workspace a deterministic hash-based name is used so that reopening the
     same external file always resolves to the same directory.
 
+    If the computed directory does not exist, scans all ``revisions.json``
+    files in ``.revisions/`` looking for one whose ``sourceFile`` resolves to
+    the same absolute path.  This handles directories created under a
+    different naming scheme (e.g. a hash-based name written before this fix).
+
     Example (internal)::
 
         workspace / .revisions / docs_plans_my-plan_md /
@@ -55,7 +60,33 @@ def _get_file_revisions_dir(
     except ValueError:
         # File is outside the workspace — use deterministic hash
         folder_name = external_folder_name(str(resolved))
-    return workspace / revisions_dir / folder_name
+
+    primary = workspace / revisions_dir / folder_name
+    if primary.exists():
+        return primary
+
+    # Fallback: scan for a directory whose sourceFile resolves to the same file.
+    # This recovers from naming-scheme mismatches (e.g. hash vs. path-based).
+    root = workspace / revisions_dir
+    if root.exists():
+        for rev_json in root.glob("*/revisions.json"):
+            try:
+                data = json.loads(rev_json.read_text(encoding="utf-8"))
+                source = data.get("sourceFile", "")
+                if not source:
+                    continue
+                src_path = Path(source)
+                source_resolved = (
+                    src_path.resolve()
+                    if src_path.is_absolute()
+                    else (workspace / source).resolve()
+                )
+                if source_resolved == resolved:
+                    return rev_json.parent
+            except Exception:
+                continue
+
+    return primary
 
 
 def _load_revisions_file(revisions_json: Path) -> dict[str, Any]:
